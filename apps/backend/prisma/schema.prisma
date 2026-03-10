@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum Language {
+  RU
+  TK
+}
+
+enum DocumentType {
+  PASSPORT
+  PHOTO
+  DIPLOMA
+  MEDICAL
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+enum CampusCategory {
+  ACADEMIC
+  DORMITORY
+  DINING
+  SPORT
+  LIBRARY
+  ADMIN
+}
+
+enum ApplicationStatus {
+  NEW
+  IN_PROGRESS
+  DOCUMENTS_REVIEW
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  avatarUrl    String?
+  birthDate    DateTime?
+  velayat      String?
+  role         UserRole  @default(USER)
+  language     Language  @default(RU)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  profile      PlayerProfile?
+  quests       QuestCompletion[]
+  badges       Badge[]
+  documents    UserDocument[]
+  chatMessages ChatMessage[]
+  application  Application?
+
+  @@index([email])
+}
+
+model PlayerProfile {
+  id            String @id @default(uuid()) @db.Uuid
+  userId        String @unique @db.Uuid
+  xp            Int    @default(0)
+  level         String @default("beginner")
+  referralCode  String @unique
+  referralCount Int    @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model QuestCompletion {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  questSlug   String
+  xpAwarded   Int
+  completedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questSlug])
+  @@index([userId])
+}
+
+model Badge {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  badgeSlug String
+  earnedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeSlug])
+  @@index([userId])
+}
+
+model UserDocument {
+  id         String         @id @default(uuid()) @db.Uuid
+  userId     String         @db.Uuid
+  type       DocumentType
+  fileName   String
+  fileUrl    String
+  status     DocumentStatus @default(PENDING)
+  uploadedAt DateTime       @default(now())
+  reviewedAt DateTime?
+  reviewNote String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  role      ChatRole
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Faculty {
+  id             String  @id @default(uuid()) @db.Uuid
+  slug           String  @unique
+  nameRu         String
+  nameTk         String
+  descriptionRu  String  @db.Text
+  descriptionTk  String  @db.Text
+  tuitionPerYear Int
+  durationYears  Int
+  imageUrl       String?
+
+  applications Application[]
+}
+
+model CampusLocation {
+  id            String         @id @default(uuid()) @db.Uuid
+  nameRu        String
+  nameTk        String
+  descriptionRu String         @db.Text
+  descriptionTk String         @db.Text
+  latitude      Float
+  longitude     Float
+  category      CampusCategory
+  imageUrl      String?
+}
+
+model Application {
+  id        String            @id @default(uuid()) @db.Uuid
+  userId    String            @unique @db.Uuid
+  facultyId String?           @db.Uuid
+  status    ApplicationStatus @default(NEW)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  faculty Faculty? @relation(fields: [facultyId], references: [id])
+
+  @@index([userId])
+}

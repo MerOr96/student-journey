@@ -1,0 +1,23 @@
+{
+  "name": "student-journey-russia",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "npm@11.3.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:frontend": "turbo dev --filter=frontend",
+    "dev:backend": "turbo dev --filter=backend",
+    "db:generate": "turbo db:generate --filter=backend",
+    "db:push": "turbo db:push --filter=backend"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.12",
+    "typescript": "^5.4.0"
+  }
+}
