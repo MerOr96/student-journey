@@ -31,6 +31,7 @@ RUN addgroup --system --gid 1001 appgroup
 RUN adduser --system --uid 1001 appuser
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/dist ./dist
+COPY --from=builder /app/packages/shared ./packages/shared
 COPY --from=prisma /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=prisma /app/node_modules/@prisma ./node_modules/@prisma
 COPY apps/backend/prisma ./prisma
