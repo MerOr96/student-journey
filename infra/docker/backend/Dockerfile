@@ -20,8 +20,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=prisma /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=prisma /app/node_modules/@prisma ./node_modules/@prisma
 COPY packages/shared ./packages/shared
-COPY apps/backend ./apps/backend
 COPY tsconfig.base.json ./
+RUN cd packages/shared && npx tsc
+COPY apps/backend ./apps/backend
 RUN cd apps/backend && npx tsc
 
 # Production
