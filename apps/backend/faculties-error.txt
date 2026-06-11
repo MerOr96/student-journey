@@ -1,0 +1,18 @@
+﻿
+ RUN  v4.0.18 C:/Users/merow/student-journey-russia/apps/backend
+
+ тЭп src/__tests__/faculties.test.ts (8 tests | 5 failed) 888ms
+     тЬУ should return a list of faculties 35ms
+     ├Ч should return faculties with correct structure 9ms
+     ├Ч should return a specific faculty by slug 11ms
+     ├Ч should return 404 for nonexistent faculty 6ms
+     ├Ч should choose a faculty for authenticated user 295ms
+     тЬУ should reject choosing faculty without auth 6ms
+     ├Ч should reject choosing nonexistent faculty 236ms
+     тЬУ should reject missing facultySlug 236ms
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 3 passed (8)
+   Start at  22:55:13
+   Duration  1.64s (transform 221ms, setup 81ms, import 501ms, tests 888ms, environment 0ms)
+

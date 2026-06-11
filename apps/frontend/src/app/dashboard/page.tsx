@@ -25,6 +25,7 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import XpBar from '@/components/game/XpBar';
 import LevelBadge from '@/components/game/LevelBadge';
+import CrmStatusCard from '@/components/crm/CrmStatusCard';
 
 export default function DashboardPage() {
   const { user, language } = useAuth();
@@ -59,10 +60,9 @@ export default function DashboardPage() {
     upload_passport: '/dashboard/documents',
     choose_faculty: '/dashboard/faculties',
     career_quiz: '/dashboard/quiz',
-    calculate_budget: '/dashboard/budget',
+    join_imo_channel: '/dashboard/quests',
     chat_with_advisor: '/dashboard/chat',
-    upload_photo: '/dashboard/documents',
-    fill_personal_info: '/dashboard/quests',
+
     submit_documents: '/dashboard/documents',
     invite_friend: '/dashboard/quests',
   };
@@ -92,6 +92,9 @@ export default function DashboardPage() {
             : 'Syýahatyňyzdaky ýagdaý'}
         </p>
       </div>
+
+      {/* CRM Application Status */}
+      <CrmStatusCard language={language} />
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

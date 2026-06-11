@@ -9,6 +9,8 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
     "db:seed": "tsx src/seed.ts",
+    "seed": "tsx src/seed.ts",
+    "sync-applicants": "tsx src/scripts/syncDjangoApplicants.ts",
     "test": "npm run db:push -- --schema=prisma/schema.prisma && npm run db:seed && vitest run",
     "test:watch": "vitest"
   },

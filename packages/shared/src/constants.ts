@@ -17,39 +17,25 @@ export const LEVELS: Level[] = [
   {
     slug: 'future_student',
     title: { ru: 'Будущий студент', tk: 'Geljekki talyp' },
-    minXp: 300,
+    minXp: 250,
     icon: '🎓',
   },
   {
     slug: 'documents_submitted',
     title: { ru: 'Документы поданы', tk: 'Resminamalar tabşyryldy' },
-    minXp: 600,
+    minXp: 400,
     icon: '📄',
   },
   {
     slug: 'accepted_student',
-    title: { ru: 'Зачисленный студент', tk: 'Kabul edilen talyp' },
-    minXp: 1000,
+    title: { ru: 'Одобренный кандидат', tk: 'Kabul edilen dalaşgär' },
+    minXp: 700,
     icon: '🏆',
   },
 ];
 
 // ─── Quests ────────────────────────────────────────────────────
 export const QUESTS: Quest[] = [
-  {
-    slug: 'fill_personal_info',
-    title: {
-      ru: 'Заполни анкету',
-      tk: 'Anketany doldur',
-    },
-    description: {
-      ru: 'Заполни свои персональные данные в профиле',
-      tk: 'Profilde şahsy maglumatlaryňy doldur',
-    },
-    xpReward: 30,
-    requiredLevel: 'beginner',
-    badgeSlug: 'first_step',
-  },
   {
     slug: 'upload_passport',
     title: {
@@ -93,18 +79,18 @@ export const QUESTS: Quest[] = [
     badgeSlug: 'quiz_champion',
   },
   {
-    slug: 'calculate_budget',
+    slug: 'join_imo_channel',
     title: {
-      ru: 'Рассчитай бюджет',
-      tk: 'Býujety hasapla',
+      ru: 'Подпишись на IMO',
+      tk: 'IMO-a agza bol',
     },
     description: {
-      ru: 'Используй калькулятор, чтобы спланировать расходы',
-      tk: 'Çykdajylary meýilleşdirmek üçin kalkulýatory ulan',
+      ru: 'Вступи в наше сообщество, чтобы узнавать новости первым!',
+      tk: 'Täzeliklerden habardar bolmak üçin jemgyýetimize goşul!',
     },
     xpReward: 40,
     requiredLevel: 'applicant',
-    badgeSlug: 'budget_planner',
+    badgeSlug: 'community_member',
   },
   {
     slug: 'chat_with_advisor',
@@ -121,30 +107,17 @@ export const QUESTS: Quest[] = [
     badgeSlug: 'ai_friend',
   },
   {
-    slug: 'upload_photo',
-    title: {
-      ru: 'Загрузи фото',
-      tk: 'Surat ýükle',
-    },
-    description: {
-      ru: 'Загрузи своё фото 3×4 для документов',
-      tk: 'Resminamalar üçin 3×4 suratyňy ýükle',
-    },
-    xpReward: 30,
-    requiredLevel: 'applicant',
-  },
-  {
     slug: 'submit_documents',
     title: {
-      ru: 'Подай документы',
-      tk: 'Resminamalary tabşyr',
+      ru: 'Загрузить аттестат',
+      tk: 'Şahadatnama ýükle',
     },
     description: {
-      ru: 'Отправь все документы на рассмотрение',
-      tk: 'Ähli resminamalary garamak üçin iber',
+      ru: 'Загрузи свой школьный аттестат или диплом',
+      tk: 'Mekdep şahadatnamasyny ýa-da diplomyny ýükle',
     },
     xpReward: 200,
-    requiredLevel: 'future_student',
+    requiredLevel: 'beginner',
     badgeSlug: 'ready_to_go',
   },
   {
@@ -161,16 +134,24 @@ export const QUESTS: Quest[] = [
     requiredLevel: 'beginner',
     badgeSlug: 'social_butterfly',
   },
+  {
+    slug: 'application_approved',
+    title: {
+      ru: 'Заявка одобрена',
+      tk: 'Ýüzlenme tassyklanyldy',
+    },
+    description: {
+      ru: 'Университет принял ваши документы',
+      tk: 'Uniwersitet resminamalaryňyzy kabul etdi',
+    },
+    xpReward: 200,
+    requiredLevel: 'documents_submitted',
+    badgeSlug: 'ready_to_go',
+  },
 ];
 
 // ─── Badges ────────────────────────────────────────────────────
 export const BADGES: Badge[] = [
-  {
-    slug: 'first_step',
-    title: { ru: 'Первый шаг', tk: 'Birinji ädim' },
-    description: { ru: 'Заполнил анкету', tk: 'Anketany doldurdy' },
-    icon: '👣',
-  },
   {
     slug: 'document_master',
     title: { ru: 'Мастер документов', tk: 'Resminama ussady' },
@@ -196,10 +177,10 @@ export const BADGES: Badge[] = [
     icon: '🏅',
   },
   {
-    slug: 'budget_planner',
-    title: { ru: 'Финансист', tk: 'Maliýeçi' },
-    description: { ru: 'Рассчитал бюджет', tk: 'Býujety hasaplady' },
-    icon: '💰',
+    slug: 'community_member',
+    title: { ru: 'Душа компании', tk: 'Kompaniýanyň ýüregi' },
+    description: { ru: 'Подписался на канал IMO', tk: 'IMO kanalyna agza boldy' },
+    icon: '💬',
   },
   {
     slug: 'ai_friend',
@@ -224,18 +205,6 @@ export const VELAYATS: VelayatOption[] = [
   { slug: 'mary', name: { ru: 'Марыйский велаят', tk: 'Mary welaýaty' } },
   { slug: 'ashgabat', name: { ru: 'Ашхабад', tk: 'Aşgabat şäheri' } },
 ];
-
-// ─── Budget Defaults ───────────────────────────────────────────
-export const BUDGET_DEFAULTS = {
-  dormitoryPerYear: 15000, // RUB
-  mealPlans: {
-    basic: 4000,      // RUB/month
-    standard: 7000,
-    premium: 12000,
-  },
-  insurancePerYear: 8000,  // RUB
-  estimatedMonthlyLiving: 15000,
-};
 
 // ─── Helpers ───────────────────────────────────────────────────
 export function getLevelForXp(xp: number): Level {

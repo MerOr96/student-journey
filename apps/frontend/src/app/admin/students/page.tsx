@@ -14,9 +14,13 @@ interface StudentRow {
   email: string;
   phone?: string;
   createdAt: string;
-  profile?: { xp: number; level: string };
-  _count?: { badges: number; questCompletions: number };
-  application?: { status: string; faculty?: { nameRu: string } };
+  applicationStatus?: string;
+  chosenFacultyName?: string | null;
+  chosenSpecialtyName?: string | null;
+  xp?: number;
+  level?: string;
+  badgeCount?: number;
+  questCount?: number;
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -113,7 +117,7 @@ export default function StudentsPage() {
                 </tr>
               ) : (
                 students.map((s) => {
-                  const status = STATUS_LABELS[s.application?.status || 'NEW'];
+                  const status = STATUS_LABELS[s.applicationStatus || 'NEW'];
                   return (
                     <tr key={s.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
@@ -124,15 +128,20 @@ export default function StudentsPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-sm">{getLevelIcon(s.profile?.level || 'beginner')}</span>
-                          <span className="text-sm font-medium text-gray-700">{s.profile?.xp || 0}</span>
+                          <span className="text-sm">{getLevelIcon(s.level || 'beginner')}</span>
+                          <span className="text-sm font-medium text-gray-700">{s.xp || 0}</span>
                           <Star className="h-3 w-3 text-primary-500" />
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm text-gray-600">
-                          {s.application?.faculty?.nameRu || '—'}
-                        </span>
+                        <div>
+                          <span className="text-sm text-gray-700">
+                            {s.chosenFacultyName || '—'}
+                          </span>
+                          {s.chosenSpecialtyName && (
+                            <p className="text-xs text-gray-400 mt-0.5">{s.chosenSpecialtyName}</p>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${status.color}`}>
@@ -142,7 +151,7 @@ export default function StudentsPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 text-sm text-gray-600">
                           <FileText className="h-3.5 w-3.5" />
-                          {s._count?.questCompletions || 0} / 9
+                          {s.questCount || 0} / 9
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center">

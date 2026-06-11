@@ -1,0 +1,70 @@
+﻿
+ RUN  v4.0.18 C:/Users/merow/student-journey-russia/apps/backend
+
+ тЭп src/__tests__/auth.test.ts (18 tests | 1 failed) 2675ms
+     ├Ч should register a new user successfully 430ms
+     тЬУ should reject registration with invalid email 8ms
+     тЬУ should reject registration with short password 6ms
+     тЬУ should reject registration with short fullName 4ms
+     тЬУ should reject duplicate email registration 247ms
+     тЬУ should accept lowercase language and normalize it 235ms
+     тЬУ should login with valid credentials  466ms
+     тЬУ should reject login with wrong password  476ms
+     тЬУ should reject login with nonexistent email 15ms
+     тЬУ should reject login with empty password 5ms
+     тЬУ should return new access token with valid refresh token 238ms
+     тЬУ should reject invalid refresh token 4ms
+     тЬУ should reject missing refresh token 4ms
+     тЬУ should logout successfully with valid token 235ms
+     тЬУ should reject logout without token 4ms
+     тЬУ should return current user with valid token 241ms
+     тЬУ should reject request without token 5ms
+     тЬУ should reject request with invalid token 3ms
+ тЭп src/__tests__/admin.test.ts (7 tests | 1 failed) 2132ms
+     ├Ч should return stats for admin user 322ms
+     тЬУ should reject request without authentication 6ms
+     тЬУ should reject request from non-admin user (403) 293ms
+     тЬУ should return paginated student list for admin  503ms
+     тЬУ should support pagination parameters 240ms
+     тЬУ should support search by name  470ms
+     тЬУ should reject non-admin user 236ms
+ тЭп src/__tests__/profile.test.ts (7 tests | 1 failed) 1620ms
+     ├Ч should return player profile for authenticated user 355ms
+     тЬУ should reject request without authentication 6ms
+     тЬУ should update fullName successfully 243ms
+     тЬУ should update phone successfully 243ms
+     тЬУ should reject too short fullName 239ms
+     тЬУ should accept lowercase language value "ru" 243ms
+     тЬУ should accept lowercase language value "tk" 240ms
+ тЭп src/__tests__/budget.test.ts (5 tests | 2 failed) 1290ms
+     ├Ч should calculate budget for valid input 410ms
+     тЬУ should reject request without authentication 7ms
+     тЬУ should reject invalid meal plan 239ms
+     тЬУ should reject missing required fields 238ms
+     ├Ч should return 404 for nonexistent faculty 243ms
+ тЭп src/__tests__/faculties.test.ts (8 tests | 5 failed) 945ms
+     тЬУ should return a list of faculties 36ms
+     ├Ч should return faculties with correct structure 10ms
+     ├Ч should return a specific faculty by slug 15ms
+     ├Ч should return 404 for nonexistent faculty 7ms
+     ├Ч should choose a faculty for authenticated user 302ms
+     тЬУ should reject choosing faculty without auth 6ms
+     ├Ч should reject choosing nonexistent faculty 253ms
+     тЬУ should reject missing facultySlug 266ms
+ тЭп src/__tests__/leaderboard.test.ts (4 tests | 4 failed) 106ms
+     ├Ч should return a leaderboard array 37ms
+     ├Ч should have correct entry structure when entries exist 7ms
+     ├Ч should return entries sorted by XP descending 5ms
+     ├Ч should not include admin users in leaderboard 4ms
+ тЬУ src/api.test.ts (10 tests) 2392ms
+     тЬУ logs in and returns tokens + user  469ms
+ тЬУ src/__tests__/chat.test.ts (8 tests) 1920ms
+     тЬУ should return empty chat history for new user  381ms
+ тЬУ src/__tests__/campus.test.ts (5 tests) 150ms
+ тЬУ src/__tests__/health.test.ts (4 tests) 90ms
+
+ Test Files  6 failed | 4 passed (10)
+      Tests  14 failed | 62 passed (76)
+   Start at  22:30:23
+   Duration  18.79s (transform 319ms, setup 506ms, import 3.37s, tests 13.32s, environment 1ms)
+

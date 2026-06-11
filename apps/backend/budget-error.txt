@@ -1,0 +1,15 @@
+﻿
+ RUN  v4.0.18 C:/Users/merow/student-journey-russia/apps/backend
+
+ тЭп src/__tests__/budget.test.ts (5 tests | 2 failed) 1188ms
+     ├Ч should calculate budget for valid input 375ms
+     тЬУ should reject request without authentication 8ms
+     тЬУ should reject invalid meal plan 239ms
+     тЬУ should reject missing required fields 238ms
+     ├Ч should return 404 for nonexistent faculty 241ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  22:54:48
+   Duration  2.19s (transform 243ms, setup 108ms, import 716ms, tests 1.19s, environment 0ms)
+

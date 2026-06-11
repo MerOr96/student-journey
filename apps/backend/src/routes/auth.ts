@@ -52,8 +52,14 @@ function formatUser(user: any) {
     avatarUrl: user.avatarUrl,
     birthDate: user.birthDate ? user.birthDate.toISOString() : null,
     velayat: user.velayat,
-    role: user.role === 'ADMIN' ? 'admin' : 'student',
+    role: user.role === 'ADMIN' ? 'admin' : 'user',
+    appRole: user.appRole === 'STUDENT' ? 'student' : 'applicant',
+    applicationStatus: user.applicationStatus || 'NEW',
     language: user.language.toLowerCase(),
+    crmApplicantId: user.crmApplicantId ?? null,
+    crmStudentId: user.crmStudentId ?? null,
+    chosenFacultyName: user.chosenFacultyName ?? null,
+    chosenSpecialtyName: user.chosenSpecialtyName ?? null,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
@@ -108,13 +114,6 @@ router.post('/register', async (req, res: Response) => {
           xp: 0,
           level: 'beginner',
           referralCode: generateReferralCode(),
-        },
-      });
-
-      await tx.application.create({
-        data: {
-          userId: newUser.id,
-          status: 'NEW',
         },
       });
 
@@ -220,15 +219,42 @@ router.post('/refresh', async (req, res: Response) => {
 });
 
 // ─── GET /me ────────────────────────────────────────────────────
+const DJANGO_CRM_URL = process.env.DJANGO_CRM_URL || 'http://localhost:8000';
+
 router.get('/me', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.userId },
-    });
+    let user = await prisma.user.findUnique({ where: { id: req.userId } });
 
     if (!user) {
       res.status(404).json({ success: false, data: null, message: 'User not found' });
       return;
+    }
+
+    // Если абитуриент уже передан в Django — проверяем, не зачислили ли его там в студенты
+    if (user.appRole === 'APPLICANT' && user.crmApplicantId) {
+      try {
+        const fetchPromise = fetch(
+          `${DJANGO_CRM_URL}/api/status/?email=${encodeURIComponent(user.email)}`,
+        );
+        const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500));
+
+        const crmRes = await Promise.race([fetchPromise, timeoutPromise]);
+
+        if (crmRes && 'ok' in crmRes && crmRes.ok) {
+          const crmData = (await crmRes.json()) as { is_converted?: boolean; student_id?: number };
+          if (crmData.is_converted) {
+            user = await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                appRole: 'STUDENT',
+                ...(crmData.student_id ? { crmStudentId: crmData.student_id } : {}),
+              },
+            });
+          }
+        }
+      } catch {
+        // Django недоступен — не блокируем ответ, отдаём что есть
+      }
     }
 
     res.json({

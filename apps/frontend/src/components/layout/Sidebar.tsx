@@ -54,11 +54,6 @@ const sidebarLinks: SidebarLink[] = [
     icon: Building2,
   },
   {
-    href: '/dashboard/budget',
-    label: { ru: 'Бюджет', tk: 'Býujet' },
-    icon: Calculator,
-  },
-  {
     href: '/dashboard/chat',
     label: { ru: 'Чат', tk: 'Söhbet' },
     icon: MessageCircle,

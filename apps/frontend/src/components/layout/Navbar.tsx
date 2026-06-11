@@ -45,11 +45,7 @@ const navLinks: NavLink[] = [
     label: { ru: 'Факультеты', tk: 'Fakultetler' },
     icon: Building2,
   },
-  {
-    href: '/dashboard/campus',
-    label: { ru: 'Кампус', tk: 'Kampus' },
-    icon: Map,
-  },
+
   {
     href: '/dashboard/chat',
     label: { ru: 'Чат', tk: 'Söhbet' },
@@ -77,7 +73,7 @@ export default function Navbar() {
             <Link href="/dashboard" className="flex items-center gap-2">
               <GraduationCap className="h-7 w-7 text-primary-600" />
               <span className="hidden text-lg font-bold text-gray-900 sm:block">
-                OkuwHemrasy
+                Okuw Hemrasy
               </span>
             </Link>
 

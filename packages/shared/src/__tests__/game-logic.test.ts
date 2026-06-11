@@ -3,7 +3,6 @@ import {
   canStartQuest,
   completeQuest,
   referralBonusXp,
-  calculateBudget,
   getOverallProgress,
   generateReferralCode,
 } from '../game-logic';
@@ -15,7 +14,6 @@ import {
   LEVELS,
   QUESTS,
   BADGES,
-  BUDGET_DEFAULTS,
 } from '../constants';
 import type { PlayerProfile } from '../types';
 
@@ -124,22 +122,22 @@ describe('getXpProgressPercent', () => {
 describe('canStartQuest', () => {
   it('should allow beginner to start fill_personal_info quest', () => {
     const profile = makeProfile();
-    expect(canStartQuest(profile, 'fill_personal_info')).toBe(true);
+    expect(canStartQuest(profile, 'upload_passport')).toBe(true);
   });
 
   it('should not allow starting an already completed quest', () => {
-    const profile = makeProfile({ completedQuests: ['fill_personal_info'] });
-    expect(canStartQuest(profile, 'fill_personal_info')).toBe(false);
+    const profile = makeProfile({ completedQuests: ['upload_passport'] });
+    expect(canStartQuest(profile, 'upload_passport')).toBe(false);
   });
 
-  it('should not allow beginner to start calculate_budget (requires applicant)', () => {
+  it('should not allow beginner to start join_imo_channel (requires applicant)', () => {
     const profile = makeProfile({ level: 'beginner' });
-    expect(canStartQuest(profile, 'calculate_budget')).toBe(false);
+    expect(canStartQuest(profile, 'join_imo_channel')).toBe(false);
   });
 
-  it('should allow applicant to start calculate_budget', () => {
+  it('should allow applicant to start join_imo_channel', () => {
     const profile = makeProfile({ level: 'applicant', xp: 100 });
-    expect(canStartQuest(profile, 'calculate_budget')).toBe(true);
+    expect(canStartQuest(profile, 'join_imo_channel')).toBe(true);
   });
 
   it('should return false for nonexistent quest slug', () => {
@@ -164,20 +162,20 @@ describe('canStartQuest', () => {
 describe('completeQuest', () => {
   it('should return new XP after completing a quest', () => {
     const profile = makeProfile();
-    const result = completeQuest(profile, 'fill_personal_info');
+    const result = completeQuest(profile, 'upload_passport');
     expect(result).not.toBeNull();
     expect(result!.newXp).toBe(30); // 0 + 30 XP reward
   });
 
   it('should return correct badge for quest with badge', () => {
     const profile = makeProfile();
-    const result = completeQuest(profile, 'fill_personal_info');
+    const result = completeQuest(profile, 'upload_passport');
     expect(result!.badgeEarned).toBe('first_step');
   });
 
   it('should return null for already completed quest', () => {
-    const profile = makeProfile({ completedQuests: ['fill_personal_info'] });
-    const result = completeQuest(profile, 'fill_personal_info');
+    const profile = makeProfile({ completedQuests: ['upload_passport'] });
+    const result = completeQuest(profile, 'upload_passport');
     expect(result).toBeNull();
   });
 
@@ -197,7 +195,7 @@ describe('completeQuest', () => {
 
   it('should not change level if XP threshold not reached', () => {
     const profile = makeProfile({ xp: 0 });
-    const result = completeQuest(profile, 'fill_personal_info');
+    const result = completeQuest(profile, 'upload_passport');
     expect(result!.newXp).toBe(30);
     expect(result!.newLevel).toBe('beginner'); // 30 < 100
   });
@@ -225,66 +223,6 @@ describe('referralBonusXp', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════
-// 7. calculateBudget
-// ═══════════════════════════════════════════════════════════════════
-describe('calculateBudget', () => {
-  const tuition = 120000;
-
-  it('should calculate basic budget without dormitory and insurance', () => {
-    const result = calculateBudget(
-      { facultySlug: 'it', dormitory: false, mealPlan: 'basic', insuranceIncluded: false },
-      tuition
-    );
-    expect(result.tuition).toBe(120000);
-    expect(result.dormitory).toBe(0);
-    expect(result.insurance).toBe(0);
-    expect(result.meals).toBe(BUDGET_DEFAULTS.mealPlans.basic * 10);
-    expect(result.currency).toBe('RUB');
-  });
-
-  it('should include dormitory cost when enabled', () => {
-    const result = calculateBudget(
-      { facultySlug: 'it', dormitory: true, mealPlan: 'basic', insuranceIncluded: false },
-      tuition
-    );
-    expect(result.dormitory).toBe(BUDGET_DEFAULTS.dormitoryPerYear);
-  });
-
-  it('should include insurance cost when enabled', () => {
-    const result = calculateBudget(
-      { facultySlug: 'it', dormitory: false, mealPlan: 'basic', insuranceIncluded: true },
-      tuition
-    );
-    expect(result.insurance).toBe(BUDGET_DEFAULTS.insurancePerYear);
-  });
-
-  it('should calculate correct totalFirstYear with all options', () => {
-    const result = calculateBudget(
-      { facultySlug: 'it', dormitory: true, mealPlan: 'premium', insuranceIncluded: true },
-      tuition
-    );
-    const expected =
-      tuition +
-      BUDGET_DEFAULTS.dormitoryPerYear +
-      BUDGET_DEFAULTS.mealPlans.premium * 10 +
-      BUDGET_DEFAULTS.insurancePerYear +
-      BUDGET_DEFAULTS.estimatedMonthlyLiving * 10;
-    expect(result.totalFirstYear).toBe(expected);
-  });
-
-  it('should calculate different meal plan costs', () => {
-    const basic = calculateBudget(
-      { facultySlug: 'it', dormitory: false, mealPlan: 'basic', insuranceIncluded: false },
-      tuition
-    );
-    const premium = calculateBudget(
-      { facultySlug: 'it', dormitory: false, mealPlan: 'premium', insuranceIncluded: false },
-      tuition
-    );
-    expect(premium.meals).toBeGreaterThan(basic.meals);
-  });
-});
 
 // ═══════════════════════════════════════════════════════════════════
 // 8. getOverallProgress
@@ -296,7 +234,7 @@ describe('getOverallProgress', () => {
   });
 
   it('should return correct percentage for partial completion', () => {
-    const profile = makeProfile({ completedQuests: ['fill_personal_info', 'upload_passport'] });
+    const profile = makeProfile({ completedQuests: ['upload_passport', 'upload_passport'] });
     // 2/9 = 22.2% → rounded to 22
     expect(getOverallProgress(profile)).toBe(22);
   });

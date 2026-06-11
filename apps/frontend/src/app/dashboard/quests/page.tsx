@@ -19,10 +19,9 @@ const questRouteMap: Partial<Record<QuestSlug, string>> = {
   upload_passport: '/dashboard/documents',
   choose_faculty: '/dashboard/faculties',
   career_quiz: '/dashboard/quiz',
-  calculate_budget: '/dashboard/budget',
+  join_imo_channel: '/dashboard/quests',
   chat_with_advisor: '/dashboard/chat',
-  upload_photo: '/dashboard/documents',
-  fill_personal_info: '/dashboard/quests',
+
   submit_documents: '/dashboard/documents',
 };
 
@@ -39,16 +38,32 @@ export default function QuestsPage() {
   } | null>(null);
 
   const handleQuestClick = useCallback(
-    (questSlug: QuestSlug) => {
+    async (questSlug: QuestSlug) => {
       if (questSlug === 'invite_friend') {
         return; // Handled by the copy button inside the card
+      }
+      if (questSlug === 'join_imo_channel') {
+        window.open('https://s.channelcom.tech/HdAdii?from=TG', '_blank');
+        if (profile && !profile.completedQuests.includes('join_imo_channel')) {
+          await completeQuest('join_imo_channel');
+          const quest = QUESTS.find((q) => q.slug === 'join_imo_channel');
+          if (quest) {
+            setAchievement({
+              type: 'quest',
+              title: localize(quest.title, language),
+              description: `+${quest.xpReward} XP`,
+              icon: '💬',
+            });
+          }
+        }
+        return;
       }
       const route = questRouteMap[questSlug];
       if (route) {
         router.push(route);
       }
     },
-    [router],
+    [router, profile, completeQuest, language],
   );
 
   const handleCopyReferral = useCallback(async () => {

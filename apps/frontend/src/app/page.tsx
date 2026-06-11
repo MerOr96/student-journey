@@ -30,7 +30,7 @@ const content = {
   ru: {
     heroTitle: 'Твой путь к образованию в России',
     heroSubtitle:
-      'OkuwHemrasy — платформа, которая поможет тебе поступить в Ульяновский государственный университет. Проходи квесты, собирай награды и готовь документы шаг за шагом.',
+      'Okuw Hemrasy — платформа, которая поможет тебе поступить в Ульяновский государственный университет. Проходи квесты, собирай награды и готовь документы шаг за шагом.',
     cta: 'Начать путешествие',
     login: 'Войти',
     features: [
@@ -54,7 +54,7 @@ const content = {
       },
     ],
     stats: [
-      { value: '1000+', label: 'студентов' },
+      { value: '13000+', label: 'студентов' },
       { value: '8', label: 'факультетов' },
       { value: '95%', label: 'поступление' },
     ],
@@ -134,7 +134,7 @@ const content = {
   tk: {
     heroTitle: 'Russiýada bilim almak ýoluň',
     heroSubtitle:
-      'OkuwHemrasy — Ulýanowsk döwlet uniwersitetine girmäge kömek edýän platforma. Kwestleri ýerine ýetir, baýraklary ýygna we resminamalaryňy ädimme-ädim taýýarla.',
+      'Okuw Hemrasy — Ulýanowsk döwlet uniwersitetine girmäge kömek edýän platforma. Kwestleri ýerine ýetir, baýraklary ýygna we resminamalaryňy ädimme-ädim taýýarla.',
     cta: 'Syyahaty başla',
     login: 'Girmek',
     features: [
@@ -248,22 +248,20 @@ export default function LandingPage() {
         <div className="flex items-center gap-1 rounded-full bg-white/20 p-1 backdrop-blur-sm">
           <button
             onClick={() => setLang('ru')}
-            className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
-              lang === 'ru'
+            className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-all ${lang === 'ru'
                 ? 'bg-white text-primary-700 shadow-sm'
                 : 'text-white hover:bg-white/10'
-            }`}
+              }`}
           >
             <Globe className="h-3.5 w-3.5" />
             RU
           </button>
           <button
             onClick={() => setLang('tk')}
-            className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
-              lang === 'tk'
+            className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-all ${lang === 'tk'
                 ? 'bg-white text-primary-700 shadow-sm'
                 : 'text-white hover:bg-white/10'
-            }`}
+              }`}
           >
             <Globe className="h-3.5 w-3.5" />
             TK
@@ -284,7 +282,7 @@ export default function LandingPage() {
           </div>
 
           <p className="mb-3 text-lg font-medium text-blue-200 tracking-wide uppercase">
-            OkuwHemrasy
+            Okuw Hemrasy
           </p>
 
           <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
@@ -471,7 +469,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white px-4 py-8">
         <div className="mx-auto max-w-4xl text-center text-sm text-gray-500">
-          &copy; 2024 OkuwHemrasy.{' '}
+          &copy; 2024 Okuw Hemrasy.{' '}
           {lang === 'ru' ? 'Все права защищены.' : 'Ähli hukuklar goralan.'}
         </div>
       </footer>

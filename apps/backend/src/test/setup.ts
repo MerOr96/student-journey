@@ -5,14 +5,14 @@ import { PrismaClient } from '@prisma/client';
 export const prisma = new PrismaClient();
 
 async function resetDb() {
-  // Keep seed reference data (Faculty, CampusLocation) intact.
+  // Keep seed reference data (Faculty) intact.
   // Clear user-generated tables in FK-safe order.
   await prisma.$transaction([
     prisma.badge.deleteMany(),
     prisma.questCompletion.deleteMany(),
     prisma.chatMessage.deleteMany(),
+    prisma.liveMessage.deleteMany(),
     prisma.userDocument.deleteMany(),
-    prisma.application.deleteMany(),
     prisma.playerProfile.deleteMany(),
     prisma.user.deleteMany({ where: { role: 'USER' } }),
   ]);

@@ -9,11 +9,16 @@ import profileRouter from './routes/profile';
 import questsRouter from './routes/quests';
 import documentsRouter from './routes/documents';
 import facultiesRouter from './routes/faculties';
-import campusRouter from './routes/campus';
-import budgetRouter from './routes/budget';
+
 import chatRouter from './routes/chat';
 import leaderboardRouter from './routes/leaderboard';
 import adminRouter from './routes/admin';
+import crmRouter from './routes/crm';
+import liveChatRouter from './routes/live-chat';
+import certificatesRouter from './routes/certificates';
+import webhooksRouter from './routes/webhooks';
+import examsRouter from './routes/exams';
+import notificationsRouter from './routes/notifications';
 
 const startedAt = Date.now();
 
@@ -34,11 +39,16 @@ export function createApp() {
   app.use('/api/quests', questsRouter);
   app.use('/api/documents', documentsRouter);
   app.use('/api/faculties', facultiesRouter);
-  app.use('/api/campus', campusRouter);
-  app.use('/api/budget', budgetRouter);
+
+  app.use('/api/chat/live', liveChatRouter); // ← ВАЖНО: до /api/chat
   app.use('/api/chat', chatRouter);
   app.use('/api/leaderboard', leaderboardRouter);
   app.use('/api/admin', adminRouter);
+  app.use('/api/crm', crmRouter);
+  app.use('/api/certificates', certificatesRouter);
+  app.use('/api/webhooks', webhooksRouter);
+  app.use('/api/exams', examsRouter);
+  app.use('/api/notifications', notificationsRouter);
 
   app.get('/api/health', (_req, res) => {
     res.json({

@@ -1,5 +1,5 @@
-import type { LevelSlug, QuestSlug, PlayerProfile, BudgetInput, BudgetBreakdown } from './types';
-import { QUESTS, LEVELS, BUDGET_DEFAULTS, getLevelForXp } from './constants';
+import type { LevelSlug, QuestSlug, PlayerProfile } from './types';
+import { QUESTS, LEVELS, getLevelForXp } from './constants';
 
 /**
  * Determines whether a player can start a given quest
@@ -47,27 +47,6 @@ export function referralBonusXp(currentReferrals: number): number {
   return Math.max(10, 50 - (currentReferrals * 10));
 }
 
-/**
- * Calculate the full budget breakdown
- */
-export function calculateBudget(
-  input: BudgetInput,
-  tuitionPerYear: number
-): BudgetBreakdown {
-  const dormitory = input.dormitory ? BUDGET_DEFAULTS.dormitoryPerYear : 0;
-  const meals = BUDGET_DEFAULTS.mealPlans[input.mealPlan] * 10; // 10 months academic year
-  const insurance = input.insuranceIncluded ? BUDGET_DEFAULTS.insurancePerYear : 0;
-
-  return {
-    tuition: tuitionPerYear,
-    dormitory,
-    meals,
-    insurance,
-    estimatedMonthlyLiving: BUDGET_DEFAULTS.estimatedMonthlyLiving,
-    totalFirstYear: tuitionPerYear + dormitory + meals + insurance + BUDGET_DEFAULTS.estimatedMonthlyLiving * 10,
-    currency: 'RUB',
-  };
-}
 
 /**
  * Get overall completion percentage for a player

@@ -1,0 +1,119 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram id="design-process" name="Процесс проектирования">
+    <mxGraphModel dx="1422" dy="762" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="320" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- STAGE 1 -->
+        <mxCell id="s1" value="1. Анализ&#xa;требований"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0E5EB0;fontSize=13;fontStyle=1;arcSize=15;"
+          vertex="1" parent="1">
+          <mxGeometry x="30" y="30" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d1" value="Определение акторов системы и их ролей. Формулировка функциональных и нефункциональных требований"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF5FB;fontColor=#000000;strokeColor=#1168BD;fontSize=11;arcSize=10;align=center;verticalAlign=middle;"
+          vertex="1" parent="1">
+          <mxGeometry x="30" y="120" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 1->2 -->
+        <mxCell id="a12" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1168BD;strokeWidth=2;fillColor=#1168BD;"
+          edge="1" source="s1" target="s2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STAGE 2 -->
+        <mxCell id="s2" value="2. Проектирование&#xa;данных"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0E5EB0;fontSize=13;fontStyle=1;arcSize=15;"
+          vertex="1" parent="1">
+          <mxGeometry x="250" y="30" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d2" value="Выявление сущностей предметной области. Определение структуры таблиц и типов данных базы данных"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF5FB;fontColor=#000000;strokeColor=#1168BD;fontSize=11;arcSize=10;align=center;verticalAlign=middle;"
+          vertex="1" parent="1">
+          <mxGeometry x="250" y="120" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 2->3 -->
+        <mxCell id="a23" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1168BD;strokeWidth=2;fillColor=#1168BD;"
+          edge="1" source="s2" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STAGE 3 -->
+        <mxCell id="s3" value="3. Проектирование&#xa;архитектуры"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0E5EB0;fontSize=13;fontStyle=1;arcSize=15;"
+          vertex="1" parent="1">
+          <mxGeometry x="470" y="30" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d3" value="Выбор стека и архитектурного стиля. Определение компонентов системы и протоколов взаимодействия"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF5FB;fontColor=#000000;strokeColor=#1168BD;fontSize=11;arcSize=10;align=center;verticalAlign=middle;"
+          vertex="1" parent="1">
+          <mxGeometry x="470" y="120" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 3->4 -->
+        <mxCell id="a34" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1168BD;strokeWidth=2;fillColor=#1168BD;"
+          edge="1" source="s3" target="s4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STAGE 4 -->
+        <mxCell id="s4" value="4. Проектирование&#xa;интерфейса"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0E5EB0;fontSize=13;fontStyle=1;arcSize=15;"
+          vertex="1" parent="1">
+          <mxGeometry x="690" y="30" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d4" value="Проектирование пользовательских сценариев, экранных форм и навигации между страницами"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF5FB;fontColor=#000000;strokeColor=#1168BD;fontSize=11;arcSize=10;align=center;verticalAlign=middle;"
+          vertex="1" parent="1">
+          <mxGeometry x="690" y="120" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 4->5 -->
+        <mxCell id="a45" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1168BD;strokeWidth=2;fillColor=#1168BD;"
+          edge="1" source="s4" target="s5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STAGE 5 -->
+        <mxCell id="s5" value="5. Реализация"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0E5EB0;fontSize=13;fontStyle=1;arcSize=15;"
+          vertex="1" parent="1">
+          <mxGeometry x="910" y="30" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d5" value="Разработка серверной и клиентской частей. Реализация REST API, геймификационной логики и интерфейса"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF5FB;fontColor=#000000;strokeColor=#1168BD;fontSize=11;arcSize=10;align=center;verticalAlign=middle;"
+          vertex="1" parent="1">
+          <mxGeometry x="910" y="120" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 5->6 -->
+        <mxCell id="a56" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1168BD;strokeWidth=2;fillColor=#1168BD;"
+          edge="1" source="s5" target="s6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STAGE 6 -->
+        <mxCell id="s6" value="6. Тестирование"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0E5EB0;fontSize=13;fontStyle=1;arcSize=15;"
+          vertex="1" parent="1">
+          <mxGeometry x="1130" y="30" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d6" value="Проверка корректности функционала автоматическим тестированием. Составление инструкции пользователя"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF5FB;fontColor=#000000;strokeColor=#1168BD;fontSize=11;arcSize=10;align=center;verticalAlign=middle;"
+          vertex="1" parent="1">
+          <mxGeometry x="1130" y="120" width="190" height="90" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

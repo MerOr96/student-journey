@@ -12,8 +12,11 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
-  // ─── Faculties ──────────────────────────────────────────────────
-  const faculties = [
+  // Note: faculties are now managed in Django CRM, not Prisma.
+
+  // ─── Faculties (legacy, kept for reference) ─────────────────────
+  // eslint-disable-next-line no-constant-condition
+  if (false) { const faculties = [
     {
       slug: 'medicine',
       nameRu: 'Медицинский факультет',
@@ -113,84 +116,15 @@ async function main() {
   ];
 
   for (const faculty of faculties) {
-    await prisma.faculty.upsert({
+    await (prisma as any).faculty.upsert({
       where: { slug: faculty.slug },
       update: faculty,
       create: faculty,
     });
   }
-  console.log(`Seeded ${faculties.length} faculties`);
+  console.log(`Seeded ${faculties.length} faculties`); }
 
-  // ─── Campus Locations ───────────────────────────────────────────
-  const campusLocations = [
-    {
-      nameRu: 'Главный корпус',
-      nameTk: 'Baş bina',
-      descriptionRu:
-        'Главное административное здание университета. Здесь расположены приёмная комиссия, ректорат и главные аудитории.',
-      descriptionTk:
-        'Uniwersitetiň bas dolandyrysh binasy. Bu yerde kabul topary, rektorat we esas auditorialar yerleshyar.',
-      latitude: 54.3142,
-      longitude: 48.4031,
-      category: 'ACADEMIC' as const,
-      imageUrl: null,
-    },
-    {
-      nameRu: 'Научная библиотека',
-      nameTk: 'Ylmy kitaphana',
-      descriptionRu:
-        'Современная библиотека с более чем 500 000 изданий. Электронные каталоги, залы для самостоятельной работы и компьютерные классы.',
-      descriptionTk:
-        '500 000-den gowrak neshirleri bolan dowrebap kitaphana. Elektron kataloglar, ozbashdak ish ucin zallar we kompyuter klaslary.',
-      latitude: 54.3148,
-      longitude: 48.4025,
-      category: 'LIBRARY' as const,
-      imageUrl: null,
-    },
-    {
-      nameRu: 'Общежитие №1',
-      nameTk: 'Yatakhana №1',
-      descriptionRu:
-        'Комфортабельное общежитие для иностранных студентов. Комнаты на 2-3 человека, кухни на каждом этаже, прачечная и зона отдыха.',
-      descriptionTk:
-        'Dashary yurtly talyplar ucin amatly yatakhana. 2-3 adamlyk otaglar, her gatda ashhanalar, kir yuwulyan yer we dynch alysh zonaklary.',
-      latitude: 54.3155,
-      longitude: 48.4010,
-      category: 'DORMITORY' as const,
-      imageUrl: null,
-    },
-    {
-      nameRu: 'Столовая «Студенческая»',
-      nameTk: 'Talyplar naharhanasy',
-      descriptionRu:
-        'Университетская столовая с доступными ценами. Разнообразное меню, включая вегетарианские и халяльные блюда.',
-      descriptionTk:
-        'Elyyeterli bahaly uniwersitet naharhanasy. Duerli tagamnamalar, wegetarian we halal naharlary hem bar.',
-      latitude: 54.3145,
-      longitude: 48.4018,
-      category: 'DINING' as const,
-      imageUrl: null,
-    },
-    {
-      nameRu: 'Спортивный комплекс',
-      nameTk: 'Sport toplumy',
-      descriptionRu:
-        'Современный спортивный комплекс с тренажёрным залом, бассейном, залами для волейбола и баскетбола. Бесплатный доступ для студентов.',
-      descriptionTk:
-        'Mashk zaly, basseyn, woleygol we basketbol zallary bolan dowrebap sport toplumy. Talyplara mugt girish.',
-      latitude: 54.3138,
-      longitude: 48.4042,
-      category: 'SPORT' as const,
-      imageUrl: null,
-    },
-  ];
 
-  // Delete existing campus locations and recreate (since they have no unique slug)
-  await prisma.campusLocation.deleteMany();
-  for (const loc of campusLocations) {
-    await prisma.campusLocation.create({ data: loc });
-  }
-  console.log(`Seeded ${campusLocations.length} campus locations`);
 
   // ─── Admin User ─────────────────────────────────────────────────
   const adminEmail = 'admin@ulsu.ru';

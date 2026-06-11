@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\apps",
+    "\\apps\\mobile",
+    "\\apps\\mobile\\app",
+    "\\apps\\mobile\\app\\(app)",
+    "\\apps\\mobile\\app\\(app)\\(applicant)",
+    "\\apps\\mobile\\src",
+    "\\apps\\mobile\\src\\components",
+    "\\apps\\mobile\\src\\components\\ui",
+    "\\packages"
+  ],
+  "SelectedNode": "\\apps\\mobile\\app\\(app)\\(applicant)\\budget-calculator.tsx",
+  "PreviewInSolutionExplorer": false
+}

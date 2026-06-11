@@ -1,4 +1,6 @@
 // ─── User & Auth ───────────────────────────────────────────────
+export type ApplicationStatus = 'NEW' | 'IN_PROGRESS' | 'DOCUMENTS_REVIEW' | 'ACCEPTED' | 'REJECTED';
+
 export interface User {
   id: string;
   email: string;
@@ -8,12 +10,56 @@ export interface User {
   birthDate?: string;
   velayat?: string;
   role: UserRole;
+  appRole: AppRole;
+  applicationStatus: ApplicationStatus;
   language: Language;
+  crmApplicantId?: number | null;
+  crmStudentId?: number | null;
+  chosenFacultyName?: string | null;
+  chosenSpecialtyName?: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export type UserRole = 'student' | 'admin';
+export interface CrmApplicantStatus {
+  id: number;
+  full_name: string;
+  email: string;
+  status: string;
+  faculty_name: string | null;
+  specialty_name: string | null;
+  submission_date: string;
+  is_converted: boolean;
+}
+
+export interface CrmStudentProfile {
+  id: number;
+  full_name: string;
+  email: string;
+  phone: string;
+  course: number;
+  specialty: string | null;
+  education_form: string | null;
+  study_group: string | null;
+  citizenship: string;
+  region: string | null;
+  visa_end: string | null;
+  insurance_end: string | null;
+  registration_expiry: string | null;
+  passport_valid_until: string | null;
+  passport_number: string | null;
+  medical_exam_expiry: string | null;
+  fingerprint_end: string | null;
+  migration_card_end: string | null;
+  living_address: string | null;
+  pending_document_uploads?: string[];
+  outside_russia: boolean;
+}
+
+// system role: user vs admin
+export type UserRole = 'user' | 'admin';
+// journey role: applicant vs student
+export type AppRole = 'applicant' | 'student';
 export type Language = 'ru' | 'tk';
 
 export interface AuthPayload {
@@ -37,7 +83,7 @@ export interface RegisterDto {
   language: Language;
 }
 
-// ─── Gamification ──────────────────────────────────────────────
+// ─── Gamification (только для абитуриентов) ────────────────────
 export type LevelSlug =
   | 'beginner'
   | 'applicant'
@@ -72,12 +118,11 @@ export type QuestSlug =
   | 'upload_passport'
   | 'choose_faculty'
   | 'career_quiz'
-  | 'calculate_budget'
+  | 'join_imo_channel'
   | 'chat_with_advisor'
-  | 'upload_photo'
-  | 'fill_personal_info'
   | 'submit_documents'
-  | 'invite_friend';
+  | 'invite_friend'
+  | 'application_approved';
 
 export interface Quest {
   slug: QuestSlug;
@@ -97,12 +142,11 @@ export interface QuestCompletion {
 }
 
 export type BadgeSlug =
-  | 'first_step'
   | 'document_master'
   | 'explorer'
   | 'social_butterfly'
   | 'quiz_champion'
-  | 'budget_planner'
+  | 'community_member'
   | 'ai_friend'
   | 'ready_to_go';
 
@@ -124,25 +168,18 @@ export interface LeaderboardEntry {
   badgeCount: number;
 }
 
-// ─── Faculty & Campus ──────────────────────────────────────────
+// ─── Faculty ───────────────────────────────────────────────────────
 export interface Faculty {
-  id: string;
-  slug: string;
-  name: Record<Language, string>;
-  description: Record<Language, string>;
-  tuitionPerYear: number;
-  durationYears: number;
-  imageUrl?: string;
+  id: number;
+  name: string;
 }
 
-export interface CampusLocation {
-  id: string;
-  name: Record<Language, string>;
-  description: Record<Language, string>;
-  latitude: number;
-  longitude: number;
-  category: 'academic' | 'dormitory' | 'dining' | 'sport' | 'library' | 'admin';
-  imageUrl?: string;
+export interface Specialty {
+  id: number;
+  name: string;
+  study_form: string;
+  faculty: number;
+  faculty_name: string;
 }
 
 // ─── Career Quiz ───────────────────────────────────────────────
@@ -155,7 +192,7 @@ export interface QuizQuestion {
 export interface QuizOption {
   id: string;
   text: Record<Language, string>;
-  facultySlugs: string[]; // weighted towards these faculties
+  facultySlugs: string[];
 }
 
 export interface QuizResult {
@@ -163,30 +200,22 @@ export interface QuizResult {
   scores: Record<string, number>;
 }
 
-// ─── Budget Calculator ─────────────────────────────────────────
-export interface BudgetInput {
-  facultySlug: string;
-  dormitory: boolean;
-  mealPlan: 'basic' | 'standard' | 'premium';
-  insuranceIncluded: boolean;
-}
-
-export interface BudgetBreakdown {
-  tuition: number;
-  dormitory: number;
-  meals: number;
-  insurance: number;
-  estimatedMonthlyLiving: number;
-  totalFirstYear: number;
-  currency: 'RUB';
-}
-
-// ─── Chat ──────────────────────────────────────────────────────
+// ─── Chat (AI) ─────────────────────────────────────────────────
 export interface ChatMessage {
   id: string;
   userId: string;
   role: 'user' | 'assistant';
   content: string;
+  createdAt: string;
+}
+
+// ─── Live Chat (студент ↔ куратор) ────────────────────────────
+export interface LiveMessage {
+  id: string;
+  userId: string;
+  fromUser: boolean;  // true = студент, false = куратор
+  content: string;
+  isRead: boolean;
   createdAt: string;
 }
 
@@ -205,28 +234,55 @@ export interface UserDocument {
   reviewNote?: string;
 }
 
-// ─── Admin CRM ─────────────────────────────────────────────────
-export interface AdminStudentView extends User {
-  profile: PlayerProfile;
-  documents: UserDocument[];
-  chosenFaculty?: Faculty;
-  applicationStatus: ApplicationStatus;
+// ─── Certificate Requests (справки/ходатайства) ───────────────
+export type CertificateRequestType = 'certificate' | 'petition' | 'other';
+export type CertificateRequestStatus = 'pending' | 'processing' | 'ready' | 'issued';
+
+export interface CertificateRequest {
+  id: string;
+  request_type: CertificateRequestType;
+  request_type_display: string;
+  description: string;
+  status: CertificateRequestStatus;
+  status_display: string;
+  admin_note: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export type ApplicationStatus =
-  | 'new'
-  | 'in_progress'
-  | 'documents_review'
-  | 'accepted'
-  | 'rejected';
+export interface CertificateRequestCreateDto {
+  email: string;
+  request_type: CertificateRequestType;
+  description: string;
+}
 
-export interface AdminDashboardStats {
-  totalStudents: number;
-  newThisWeek: number;
-  documentsSubmitted: number;
-  accepted: number;
-  averageXp: number;
-  topStudents: LeaderboardEntry[];
+// ─── Exams & Notifications (Phase 2) ─────────────────────────────
+export interface ExamMaterial {
+  title: string;
+  url: string;
+}
+
+export interface Exam {
+  id: string;
+  userId: string;
+  subject: string;
+  examDate: string;
+  meetingLink?: string;
+  score?: number;
+  status: 'PENDING' | 'PASSED' | 'FAILED';
+  materials?: ExamMaterial[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Notification {
+  id: string;
+  userId?: string;
+  title: string;
+  message: string;
+  type: 'PERSONAL' | 'MASS' | 'SYSTEM';
+  isRead: boolean;
+  createdAt: string;
 }
 
 // ─── API Responses ─────────────────────────────────────────────

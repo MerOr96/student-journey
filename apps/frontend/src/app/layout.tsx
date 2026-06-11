@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'OkuwHemrasy',
+  title: 'Okuw Hemrasy',
   description:
     'Gamified platform helping Turkmen students navigate their journey to Russian universities. Complete quests, earn badges, and track your application progress.',
 };

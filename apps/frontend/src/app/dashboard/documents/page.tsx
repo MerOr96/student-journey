@@ -121,17 +121,19 @@ export default function DocumentsPage() {
               });
             }
           }
+
           if (
-            selectedType === 'photo' &&
-            !profile.completedQuests.includes('upload_photo')
+            selectedType === 'diploma' &&
+            !profile.completedQuests.includes('submit_documents')
           ) {
-            await completeQuest('upload_photo');
-            const quest = QUESTS.find((q) => q.slug === 'upload_photo');
+            await completeQuest('submit_documents');
+            const quest = QUESTS.find((q) => q.slug === 'submit_documents');
             if (quest) {
               setAchievement({
                 type: 'quest',
                 title: localize(quest.title, language),
                 description: `+${quest.xpReward} XP`,
+                icon: '🎓',
               });
             }
           }

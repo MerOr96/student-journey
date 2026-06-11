@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { QUESTS, getLevelForXp, canStartQuest, completeQuest } from '@student-journey/shared';
@@ -157,10 +158,13 @@ router.post('/upload', upload.single('file'), async (req: AuthRequest, res: Resp
 
     // Auto-complete related quests
     let questResult = null;
+    let completedSlug = '';
     if (docType === 'PASSPORT') {
+      completedSlug = 'upload_passport';
       questResult = await tryAutoCompleteQuest(req.userId!, 'upload_passport');
-    } else if (docType === 'PHOTO') {
-      questResult = await tryAutoCompleteQuest(req.userId!, 'upload_photo');
+    } else if (docType === 'DIPLOMA') {
+      completedSlug = 'submit_documents';
+      questResult = await tryAutoCompleteQuest(req.userId!, 'submit_documents');
     }
 
     res.status(201).json({
@@ -177,11 +181,11 @@ router.post('/upload', upload.single('file'), async (req: AuthRequest, res: Resp
           reviewedAt: null,
           reviewNote: null,
         },
-        questCompleted: questResult
+        questCompleted: questResult && completedSlug
           ? {
-              questSlug: docType === 'PASSPORT' ? 'upload_passport' : 'upload_photo',
+              questSlug: completedSlug,
               xpAwarded: questResult.newXp - (questResult.newXp - (QUESTS.find(
-                (q) => q.slug === (docType === 'PASSPORT' ? 'upload_passport' : 'upload_photo')
+                (q) => q.slug === completedSlug
               )?.xpReward ?? 0)),
               newXp: questResult.newXp,
               newLevel: questResult.newLevel,
@@ -249,6 +253,37 @@ router.put('/:id/review', requireAdmin, async (req: AuthRequest, res: Response) 
   } catch (error) {
     console.error('Review document error:', error);
     res.status(500).json({ success: false, data: null, message: 'Failed to review document' });
+  }
+});
+
+// ─── DELETE /:id — delete a document ────────────────────────────
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const doc = await prisma.userDocument.findUnique({ where: { id } });
+    if (!doc) {
+      res.status(404).json({ success: false, data: null, message: 'Document not found' });
+      return;
+    }
+
+    if (doc.userId !== req.userId && req.userRole !== 'ADMIN') {
+      res.status(403).json({ success: false, data: null, message: 'Forbidden' });
+      return;
+    }
+
+    await prisma.userDocument.delete({ where: { id } });
+
+    const filePath = path.join(process.cwd(), doc.fileUrl);
+    try {
+      await fs.unlink(filePath);
+    } catch (fsError) {
+      console.error('Failed to delete file from disk:', fsError);
+    }
+
+    res.json({ success: true, data: null, message: 'Document deleted' });
+  } catch (error) {
+    console.error('Delete document error:', error);
+    res.status(500).json({ success: false, data: null, message: 'Failed to delete document' });
   }
 });
 
