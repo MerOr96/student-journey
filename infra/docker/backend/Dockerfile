@@ -33,6 +33,7 @@ RUN adduser --system --uid 1001 appuser
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/dist ./dist
 COPY --from=builder /app/packages/shared ./packages/shared
+RUN sed -i 's/src\/index\.ts/dist\/index.js/g' packages/shared/package.json
 COPY --from=prisma /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=prisma /app/node_modules/@prisma ./node_modules/@prisma
 COPY apps/backend/prisma ./prisma
