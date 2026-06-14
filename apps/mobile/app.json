@@ -23,7 +23,8 @@
         "backgroundColor": "#0ea5e9"
       },
       "edgeToEdgeEnabled": true,
-      "package": "ru.ulsu.studentjourney"
+      "package": "ru.ulsu.studentjourney",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png",

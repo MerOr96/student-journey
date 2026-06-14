@@ -64,12 +64,16 @@ export async function registerPushToken(): Promise<void> {
       });
     }
 
-    // Получаем FCM токен
-    const tokenData = await Notifications.getDevicePushTokenAsync();
+    // Получаем Expo Push Token
+    const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+    if (!projectId) {
+      console.warn('[notifications] EAS projectId not found, push token might fail');
+    }
+    const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
     const pushToken = tokenData.data;
 
     if (!pushToken) {
-      console.log('[notifications] Could not get push token');
+      console.log('[notifications] Could not get expo push token');
       return;
     }
 
