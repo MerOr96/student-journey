@@ -38,6 +38,42 @@ async function request<T>(
     const json = await res.json();
 
     if (res.status === 401) {
+      if (path === '/auth/refresh' || path === '/auth/login') {
+        await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+        return json;
+      }
+
+      const refreshToken = await AsyncStorage.getItem('refreshToken');
+      if (refreshToken) {
+        try {
+          const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+          });
+          
+          if (refreshRes.ok) {
+            const refreshJson = await refreshRes.json();
+            if (refreshJson.success && refreshJson.data?.accessToken) {
+              const newAccessToken = refreshJson.data.accessToken;
+              await AsyncStorage.setItem('accessToken', newAccessToken);
+              
+              // Повторяем оригинальный запрос с новым токеном
+              headers['Authorization'] = `Bearer ${newAccessToken}`;
+              const retryRes = await fetch(`${BASE_URL}${path}`, {
+                method,
+                headers,
+                body: isFormData ? (body as FormData) : (body ? JSON.stringify(body) : undefined),
+              });
+              return await retryRes.json();
+            }
+          }
+        } catch (e) {
+          console.error('[api] Token refresh failed:', e);
+        }
+      }
+
+      // Если обновить не получилось или нет рефреш-токена
       await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
     }
 
