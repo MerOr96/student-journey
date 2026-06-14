@@ -65,10 +65,11 @@ export async function registerPushToken(): Promise<void> {
     }
 
     // Получаем Expo Push Token
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
-    if (!projectId) {
-      console.warn('[notifications] EAS projectId not found, push token might fail');
-    }
+    const projectId =
+      Constants.expoConfig?.extra?.eas?.projectId ??
+      Constants.easConfig?.projectId ??
+      '744efc98-cf97-44ac-8ec0-fae37db7ae74';
+
     const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
     const pushToken = tokenData.data;
 
