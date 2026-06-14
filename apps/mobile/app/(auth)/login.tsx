@@ -20,7 +20,11 @@ export default function LoginScreen() {
     if (!email || !password) { setError('Введите email и пароль'); return; }
     setLoading(true);
     try {
-      const user = await login(email.trim(), password);
+      let loginInput = email.trim();
+      if (!loginInput.includes('@')) {
+        loginInput = `${loginInput}@stud.ulsu.ru`;
+      }
+      const user = await login(loginInput, password);
       if (user?.role === 'admin') {
         router.replace('/(admin)/dashboard' as any);
       } else if (user?.appRole === 'student') {
@@ -52,11 +56,10 @@ export default function LoginScreen() {
           {error ? <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text></View> : null}
 
           <Input
-            label="Email"
+            label="Логин (Email или ФИО)"
             value={email}
             onChangeText={setEmail}
-            placeholder="your@email.com"
-            keyboardType="email-address"
+            placeholder="Например: ivanov.ivan"
             autoCapitalize="none"
             autoCorrect={false}
           />
@@ -75,7 +78,7 @@ export default function LoginScreen() {
 
           <TouchableOpacity onPress={() => router.push('/(auth)/register')} style={styles.registerLink}>
             <Text style={styles.registerText}>
-              Нет аккаунта? <Text style={styles.registerTextBold}>Зарегистрироваться</Text>
+              <Text style={styles.registerTextBold}>Подать документы (Для абитуриентов)</Text>
             </Text>
           </TouchableOpacity>
         </View>

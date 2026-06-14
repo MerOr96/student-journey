@@ -40,7 +40,14 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/app"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "744efc98-cf97-44ac-8ec0-fae37db7ae74"
+      }
     }
   }
 }

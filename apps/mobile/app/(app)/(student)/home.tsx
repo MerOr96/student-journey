@@ -20,6 +20,8 @@ export default function StudentHomeScreen() {
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
 
+    const [activeDay, setActiveDay] = useState<'today' | 'tomorrow'>('today');
+
   const load = async () => {
     await refreshUser();
     const res = await api.get<CrmStudentProfile>('/crm/student');
@@ -31,6 +33,8 @@ export default function StudentHomeScreen() {
         setUnreadCount((notifRes.data as any).count);
       }
     } catch (e) { }
+
+
   };
 
   useEffect(() => {
@@ -116,6 +120,8 @@ export default function StudentHomeScreen() {
           </Card>
         )}
 
+
+
         {/* Быстрые действия */}
         <Text style={styles.sectionTitle}>{t('quickActionsLabel')}</Text>
         <View style={styles.actionsGrid}>
@@ -140,6 +146,8 @@ export default function StudentHomeScreen() {
     </SafeAreaView>
   );
 }
+
+
 
 function ExpiryItem({ label, date, t }: { label: string; date: string | null; t: (k: TranslationKey, v?: any) => string }) {
   if (!date) {
@@ -219,6 +227,8 @@ const styles = StyleSheet.create({
   noDataEmoji: { fontSize: 40, marginBottom: 8 },
   noDataTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a', marginBottom: 4 },
   noDataText: { fontSize: 13, color: '#64748b', textAlign: 'center' },
+
+
 
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a' },
   actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

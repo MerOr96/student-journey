@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { ApiResponse } from '@student-journey/shared';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api';
-console.log('[API] BASE_URL =', BASE_URL);
 const TIMEOUT_MS = 12000; // 12 секунд
 
 async function getToken(): Promise<string | null> {

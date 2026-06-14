@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { api } from '@/lib/api';
 import { Card } from '@/components/ui/Card';
@@ -43,11 +43,15 @@ export default function DocumentsScreen() {
       const asset = result.assets[0];
 
       const formData = new FormData();
-      formData.append('file', {
-        uri: asset.uri,
-        name: asset.name,
-        type: asset.mimeType || 'application/octet-stream',
-      } as any);
+      if (Platform.OS === 'web') {
+        formData.append('file', asset.file as any);
+      } else {
+        formData.append('file', {
+          uri: asset.uri,
+          name: asset.name,
+          type: asset.mimeType || 'application/octet-stream',
+        } as any);
+      }
       formData.append('doc_type', docType);
 
       setRefreshing(true);

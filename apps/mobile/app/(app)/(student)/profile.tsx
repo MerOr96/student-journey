@@ -112,8 +112,8 @@ export default function StudentProfileScreen() {
                   <Text style={styles.academVal}>{crmData.study_group || '—'}</Text>
                 </View>
                 <View style={styles.academCol}>
-                  <Text style={styles.academLabel}>Основа</Text>
-                  <Text style={styles.academVal}>{crmData.education_form === 'Бюджет' ? 'Бюджет' : 'Контракт'}</Text>
+                  <Text style={styles.academLabel}>Основа / Форма</Text>
+                  <Text style={styles.academVal}>{crmData.budget ? 'Бюджет' : 'Контракт'} / {crmData.education_form || '—'}</Text>
                 </View>
               </View>
               <View style={{ marginTop: 12 }}>

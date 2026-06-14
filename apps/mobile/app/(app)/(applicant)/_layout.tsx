@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import { Text, DeviceEventEmitter } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
@@ -13,6 +13,11 @@ export default function ApplicantTabsLayout() {
   const { t, lang } = useTranslation();
   const { user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Ограничение доступа: если это студент, редиректим в студенческую зону
+  if (user?.appRole === 'student') {
+    return <Redirect href="/(app)/(student)/home" />;
+  }
 
   const isAccepted = user?.applicationStatus === 'ACCEPTED';
 

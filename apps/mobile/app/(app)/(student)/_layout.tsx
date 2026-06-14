@@ -1,6 +1,7 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import { Text, DeviceEventEmitter } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
+import { useAuth } from '@/lib/auth-context';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 function Icon({ emoji, focused }: { emoji: string; focused: boolean }) {
@@ -9,7 +10,13 @@ function Icon({ emoji, focused }: { emoji: string; focused: boolean }) {
 
 export default function StudentTabsLayout() {
   const { t, lang } = useTranslation();
+  const { user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Ограничение доступа: если это абитуриент, редиректим в зону абитуриента
+  if (user && user.appRole !== 'student') {
+    return <Redirect href="/(app)/(applicant)/home" />;
+  }
 
   useEffect(() => {
     const fetchCount = async () => {
