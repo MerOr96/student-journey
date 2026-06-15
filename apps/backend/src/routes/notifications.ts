@@ -13,15 +13,15 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { crmApplicantId: true, email: true }
+      select: { crmApplicantId: true, email: true, crmStudentId: true }
     });
 
-    if (!user || !user.crmApplicantId) {
+    if (!user || (!user.crmApplicantId && !user.crmStudentId)) {
       res.json({ success: true, data: [] });
       return;
     }
 
-    const djangoRes = await fetch(`${DJANGO_CRM_URL}/api/student-notifications/?email=${encodeURIComponent(user.email || '')}&applicant_id=${user.crmApplicantId}`);
+    const djangoRes = await fetch(`${DJANGO_CRM_URL}/api/student-notifications/?email=${encodeURIComponent(user.email || '')}&applicant_id=${user.crmApplicantId || ''}&student_id=${user.crmStudentId || ''}`);
     if (!djangoRes.ok) throw new Error(`Django API error: ${djangoRes.status}`);
     const djangoData = await djangoRes.json();
 
@@ -55,15 +55,15 @@ router.get('/unread-count', authenticate, async (req: AuthRequest, res: Response
     const userId = req.userId!;
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { crmApplicantId: true, email: true }
+      select: { crmApplicantId: true, email: true, crmStudentId: true }
     });
 
-    if (!user || !user.crmApplicantId) {
+    if (!user || (!user.crmApplicantId && !user.crmStudentId)) {
       res.json({ success: true, data: { count: 0 } });
       return;
     }
 
-    const djangoRes = await fetch(`${DJANGO_CRM_URL}/api/student-notifications/?email=${encodeURIComponent(user.email || '')}&applicant_id=${user.crmApplicantId}`);
+    const djangoRes = await fetch(`${DJANGO_CRM_URL}/api/student-notifications/?email=${encodeURIComponent(user.email || '')}&applicant_id=${user.crmApplicantId || ''}&student_id=${user.crmStudentId || ''}`);
     if (!djangoRes.ok) throw new Error(`Django API error: ${djangoRes.status}`);
     const djangoData = await djangoRes.json();
 

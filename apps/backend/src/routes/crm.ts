@@ -74,6 +74,7 @@ router.get('/student', authenticate, async (req: AuthRequest, res: Response) => 
         headers: {
           'X-App-User-Email': user.email,
           'X-App-User-Id': user.id,
+          ...(user.crmStudentId ? { 'X-App-Crm-Student-Id': String(user.crmStudentId) } : {})
         },
       }
     );
@@ -122,6 +123,7 @@ router.post('/student/upload', authenticate, upload.single('file'), async (req: 
         headers: {
           'X-App-User-Email': user.email,
           'X-App-User-Id': user.id,
+          ...(user.crmStudentId ? { 'X-App-Crm-Student-Id': String(user.crmStudentId) } : {})
         },
         body: formData,
       }
@@ -191,6 +193,8 @@ router.post('/link', authenticate, async (req: AuthRequest, res: Response) => {
 router.post('/push-token', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { token } = req.body as { token?: string };
+    require('fs').appendFileSync('push_token_debug.log', `[${new Date().toISOString()}] User: ${req.userId}, Token: ${token}\n`);
+    
     if (!token) {
       res.status(400).json({ success: false, data: null, message: 'token is required' });
       return;
@@ -206,5 +210,7 @@ router.post('/push-token', authenticate, async (req: AuthRequest, res: Response)
     res.status(500).json({ success: false, data: null, message: 'Failed to save push token' });
   }
 });
+
+
 
 export default router;

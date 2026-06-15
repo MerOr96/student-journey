@@ -29,7 +29,11 @@ router.post('/django', async (req: Request, res: Response) => {
     const {
       event,
       studentEmail,
+      studentId,
+      applicantId,
       emails,
+      studentIds,
+      applicantIds,
       pushTitle,
       pushBody,
       screen,
@@ -37,7 +41,11 @@ router.post('/django', async (req: Request, res: Response) => {
     } = req.body as {
       event?: string;
       studentEmail?: string;
+      studentId?: number;
+      applicantId?: number;
       emails?: string[];
+      studentIds?: number[];
+      applicantIds?: number[];
       pushTitle?: string;
       pushBody?: string;
       screen?: string;
@@ -54,13 +62,18 @@ router.post('/django', async (req: Request, res: Response) => {
       case 'push_notification':
       case 'certificate_created':
       case 'certificate_status_changed': {
-        if (!studentEmail) {
-          res.status(400).json({ ok: false, error: 'studentEmail required for this event' });
+        if (!studentEmail && !studentId && !applicantId) {
+          res.status(400).json({ ok: false, error: 'Target identifier required for this event' });
           return;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: studentEmail.toLowerCase() },
+        const whereClause: any = [];
+        if (studentId) whereClause.push({ crmStudentId: studentId });
+        if (applicantId) whereClause.push({ crmApplicantId: applicantId });
+        if (studentEmail) whereClause.push({ email: studentEmail.toLowerCase() });
+
+        const user = await prisma.user.findFirst({
+          where: { OR: whereClause },
           select: { pushToken: true },
         });
 
@@ -83,14 +96,19 @@ router.post('/django', async (req: Request, res: Response) => {
 
       // 2. Массовая рассылка (broadcast из CRM или document expiry reminders)
       case 'broadcast': {
-        if (!emails || !Array.isArray(emails) || emails.length === 0) {
-          res.status(400).json({ ok: false, error: 'emails array required for broadcast' });
+        if (!emails?.length && !studentIds?.length && !applicantIds?.length) {
+          res.status(400).json({ ok: false, error: 'Targets required for broadcast' });
           return;
         }
 
+        const whereClause: any = [];
+        if (studentIds?.length) whereClause.push({ crmStudentId: { in: studentIds } });
+        if (applicantIds?.length) whereClause.push({ crmApplicantId: { in: applicantIds } });
+        if (emails?.length) whereClause.push({ email: { in: emails.map((e) => e.toLowerCase()) } });
+
         const users = await prisma.user.findMany({
           where: {
-            email: { in: emails.map((e) => e.toLowerCase()) },
+            OR: whereClause,
             pushToken: { not: null },
           },
           select: { pushToken: true },

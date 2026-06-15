@@ -48,6 +48,7 @@ export interface CrmStudentProfile {
   registration_expiry: string | null;
   passport_valid_until: string | null;
   passport_number: string | null;
+  budget: boolean;
   medical_exam_expiry: string | null;
   fingerprint_end: string | null;
   migration_card_end: string | null;

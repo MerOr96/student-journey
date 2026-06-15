@@ -6,6 +6,7 @@
   "workspaces": [
     "apps/frontend",
     "apps/backend",
+    "apps/mobile",
     "packages/*"
   ],
   "scripts": {

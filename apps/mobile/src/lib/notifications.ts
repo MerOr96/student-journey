@@ -20,8 +20,12 @@ Notifications.setNotificationHandler({
  */
 export async function registerPushToken(): Promise<void> {
   // Работает только на реальном устройстве и не в Expo Go (в SDK 53+ Expo Go больше не поддерживает пуши)
-  if (!Device.isDevice || Constants.appOwnership === 'expo') {
-    console.log('[notifications] Skipping push registration — not a real device or running in Expo Go');
+  if (!Device.isDevice) {
+    alert('[Debug] Device is not physical (Emulator)');
+    return;
+  }
+  if (Constants.appOwnership === 'expo') {
+    alert('[Debug] Running in Expo Go');
     return;
   }
 
@@ -35,7 +39,7 @@ export async function registerPushToken(): Promise<void> {
     }
 
     if (finalStatus !== 'granted') {
-      console.log('[notifications] Push permission denied');
+      alert(`[Debug] Push permission denied. Final status: ${finalStatus}`);
       return;
     }
 
@@ -75,14 +79,19 @@ export async function registerPushToken(): Promise<void> {
 
     if (!pushToken) {
       console.log('[notifications] Could not get expo push token');
+      alert('Token is empty');
       return;
     }
 
     // Сохраняем токен на сервере
-    await api.post('/crm/push-token', { token: pushToken });
+    const res = await api.post('/crm/push-token', { token: pushToken });
     console.log('[notifications] Push token registered');
-  } catch (err) {
+    
+    // ВРЕМЕННО: выводим успех и сам токен для диагностики
+    alert(`Token updated: ${res.success}\n${pushToken.substring(0, 30)}...`);
+  } catch (err: any) {
     console.error('[notifications] Error registering push token:', err);
+    alert('Push Token Error: ' + err.message);
   }
 }
 

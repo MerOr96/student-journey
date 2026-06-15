@@ -39,7 +39,10 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
       meetingLink: exam.meeting_link,
       score: exam.score,
       status: exam.status,
-      materials: exam.materials || []
+      materials: (exam.materials || []).map((m: any) => ({
+        ...m,
+        url: m.url ? m.url.replace(DJANGO_CRM_URL, `https://${req.get('host')}`) : m.url
+      }))
     }));
 
     res.json({ success: true, data: formattedData });

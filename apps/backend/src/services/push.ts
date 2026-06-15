@@ -1,10 +1,6 @@
 /**
- * FCM Push Notification Service
- * Используем Firebase Cloud Messaging v1 HTTP API
+ * Expo Push Notification Service
  */
-
-const FCM_SERVER_KEY = process.env.FCM_SERVER_KEY || '';
-const FCM_PROJECT_ID = process.env.FCM_PROJECT_ID || '';
 
 export interface PushPayload {
   title: string;
@@ -15,54 +11,43 @@ export interface PushPayload {
 }
 
 /**
- * Отправить push-уведомление одному пользователю по его FCM токену.
- * Использует Legacy HTTP API (простая интеграция без OAuth2).
+ * Отправить push-уведомление одному пользователю через Expo Push API
  */
 export async function sendPush(pushToken: string, payload: PushPayload): Promise<boolean> {
-  if (!FCM_SERVER_KEY) {
-    console.warn('[push] FCM_SERVER_KEY not set, skipping push');
-    return false;
-  }
-
   if (!pushToken) return false;
 
   try {
-    const body = {
+    const message = {
       to: pushToken,
-      notification: {
-        title: payload.title,
-        body: payload.body,
-        sound: 'default',
-        badge: 1,
-      },
+      sound: 'default',
+      title: payload.title,
+      body: payload.body,
       data: {
         ...(payload.data || {}),
         screen: payload.screen || '',
-        title: payload.title,
-        body: payload.body,
       },
       priority: 'high',
-      content_available: true,
     };
 
-    const res = await fetch('https://fcm.googleapis.com/fcm/send', {
+    const res = await fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
         'Content-Type': 'application/json',
-        Authorization: `key=${FCM_SERVER_KEY}`,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(message),
     });
 
     if (!res.ok) {
       const text = await res.text();
-      console.error('[push] FCM error:', res.status, text);
+      console.error('[push] Expo API error:', res.status, text);
       return false;
     }
 
-    const json = await res.json() as { success: number; failure: number };
-    if (json.failure > 0) {
-      console.warn('[push] FCM delivery failed for token:', pushToken);
+    const data = await res.json() as any;
+    if (data.data?.status === 'error') {
+      console.warn('[push] Expo API delivery error:', data.data.message);
       return false;
     }
 
@@ -74,48 +59,46 @@ export async function sendPush(pushToken: string, payload: PushPayload): Promise
 }
 
 /**
- * Отправить push нескольким пользователям (batch, до 1000 токенов за раз).
+ * Отправить push нескольким пользователям (batch) через Expo Push API
  */
 export async function sendPushBatch(
   tokens: string[],
   payload: PushPayload,
 ): Promise<void> {
-  if (!FCM_SERVER_KEY || tokens.length === 0) return;
+  if (tokens.length === 0) return;
 
-  // FCM поддерживает до 1000 registration_ids за раз
+  // Expo API поддерживает отправку массива сообщений до 100 штук за раз
   const chunks = [];
-  for (let i = 0; i < tokens.length; i += 1000) {
-    chunks.push(tokens.slice(i, i + 1000));
+  for (let i = 0; i < tokens.length; i += 100) {
+    chunks.push(tokens.slice(i, i + 100));
   }
 
   for (const chunk of chunks) {
     try {
-      const body = {
-        registration_ids: chunk,
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          sound: 'default',
-        },
+      const messages = chunk.map(token => ({
+        to: token,
+        sound: 'default',
+        title: payload.title,
+        body: payload.body,
         data: {
           ...(payload.data || {}),
           screen: payload.screen || '',
         },
         priority: 'high',
-        content_available: true,
-      };
+      }));
 
-      const res = await fetch('https://fcm.googleapis.com/fcm/send', {
+      const res = await fetch('https://exp.host/--/api/v2/push/send', {
         method: 'POST',
         headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
           'Content-Type': 'application/json',
-          Authorization: `key=${FCM_SERVER_KEY}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(messages),
       });
 
       if (!res.ok) {
-        console.error('[push] FCM batch error:', res.status);
+        console.error('[push] Expo batch error:', res.status);
       }
     } catch (err) {
       console.error('[push] sendPushBatch error:', err);

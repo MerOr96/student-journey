@@ -23,7 +23,12 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const crmRes = await fetchCRM(`${DJANGO_CRM_URL}/api/certificates/?email=${encodeURIComponent(user.email)}`);
+    const crmRes = await fetchCRM(`${DJANGO_CRM_URL}/api/certificates/?email=${encodeURIComponent(user.email)}`, {
+      headers: {
+        'X-App-User-Email': user.email,
+        ...(user.crmStudentId ? { 'X-App-Crm-Student-Id': String(user.crmStudentId) } : {})
+      }
+    });
     
     if (crmRes.status === 404) {
       // Студент еще не передан в CRM, значит заявок быть не может
@@ -71,6 +76,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       headers: {
         'Content-Type': 'application/json',
         'X-App-User-Email': user.email,
+        ...(user.crmStudentId ? { 'X-App-Crm-Student-Id': String(user.crmStudentId) } : {})
       },
       body: JSON.stringify({ email: user.email, request_type: type, description: description.trim() }),
     });

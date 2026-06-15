@@ -135,6 +135,62 @@ router.post('/register', async (req, res: Response) => {
   }
 });
 
+// ─── POST /internal/bulk-register ─────────────────────────────
+const internalRegisterSchema = z.object({
+  users: z.array(z.object({
+    email: z.string(),
+    password: z.string(),
+    fullName: z.string(),
+    crmStudentId: z.number().optional(),
+    appRole: z.enum(['APPLICANT', 'STUDENT']).default('STUDENT')
+  }))
+});
+
+router.post('/internal/bulk-register', async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = internalRegisterSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ success: false, message: 'Invalid payload' });
+      return;
+    }
+
+    const createdUsers = [];
+    for (const u of parsed.data.users) {
+      const existing = await prisma.user.findUnique({ where: { email: u.email } });
+      if (existing) continue; // Skip existing
+
+      const passwordHash = await bcrypt.hash(u.password, 12);
+      const newUser = await prisma.$transaction(async (tx) => {
+        const created = await tx.user.create({
+          data: {
+            email: u.email,
+            passwordHash,
+            fullName: u.fullName,
+            role: 'USER',
+            appRole: u.appRole,
+            crmStudentId: u.crmStudentId,
+          },
+        });
+        await tx.playerProfile.create({
+          data: {
+            userId: created.id,
+            xp: 0,
+            level: 'beginner',
+            referralCode: generateReferralCode(),
+          },
+        });
+        return created;
+      });
+      createdUsers.push(newUser.email);
+    }
+
+    res.status(200).json({ success: true, createdCount: createdUsers.length, createdUsers });
+  } catch (error) {
+    console.error('Bulk register error:', error);
+    res.status(500).json({ success: false, message: 'Bulk registration failed' });
+  }
+});
+
 // ─── POST /login ────────────────────────────────────────────────
 router.post('/login', async (req, res: Response) => {
   try {
@@ -241,8 +297,17 @@ router.get('/me', authenticate, async (req: AuthRequest, res: Response) => {
         const crmRes = await Promise.race([fetchPromise, timeoutPromise]);
 
         if (crmRes && 'ok' in crmRes && crmRes.ok) {
-          const crmData = (await crmRes.json()) as { is_converted?: boolean; student_id?: number };
-          if (crmData.is_converted) {
+          const crmData = (await crmRes.json()) as { is_converted?: boolean; student_id?: number; status?: string };
+          if (crmData.status) {
+            user = await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                applicationStatus: crmData.status.toUpperCase(),
+                appRole: crmData.is_converted ? 'STUDENT' : 'APPLICANT',
+                ...(crmData.student_id ? { crmStudentId: crmData.student_id } : {}),
+              },
+            });
+          } else if (crmData.is_converted) {
             user = await prisma.user.update({
               where: { id: user.id },
               data: {
